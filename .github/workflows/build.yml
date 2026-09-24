@@ -1,0 +1,40 @@
+name: Build lk2nd
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-arm-none-eabi \
+            binutils-arm-none-eabi \
+            device-tree-compiler \
+            build-essential
+
+      - name: Build MSM8953 secondary
+        run: |
+          make TOOLCHAIN_PREFIX=arm-none-eabi- msm8953-secondary
+
+      - name: Check output
+        run: |
+          ls -lh build-msm8953-secondary/lk2nd.img
+          file build-msm8953-secondary/lk2nd.img
+
+      - name: Upload lk2nd.img
+        uses: actions/upload-artifact@v4
+        with:
+          name: lk2nd-msm8953-secondary
+          path: build-msm8953-secondary/lk2nd.img
+          if-no-files-found: error
