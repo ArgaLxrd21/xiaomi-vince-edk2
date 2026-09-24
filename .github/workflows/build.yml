@@ -23,6 +23,17 @@ jobs:
             device-tree-compiler \
             build-essential
 
+      - name: Inspect build targets
+        run: |
+          echo "=== Makefile targets ==="
+          grep -nE '^[a-zA-Z0-9_.-]+:' Makefile | head -100
+
+          echo "=== Repository ==="
+          ls -la
+
+          echo "=== Build files ==="
+          find . -maxdepth 2 -type f | sort | head -200
+
       - name: Build MSM8953 secondary
         run: |
           make TOOLCHAIN_PREFIX=arm-none-eabi- msm8953-secondary
